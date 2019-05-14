@@ -932,17 +932,16 @@ void GCodeExport::startExtruder(const size_t new_extruder)
     assert(getCurrentExtrudedVolume() == 0.0 && "Just after an extruder switch we haven't extruded anything yet!");
     resetExtrusionValue(); // zero the E value on the new extruder, just to be sure
 
-    const std::string start_code_str = Application::getInstance().current_slice->scene.extruders[old_extruder].settings.get<std::string>("machine_extruder_start_code");
-    const char *start_code = start_code_str.c_str();
+    const std::string start_code = Application::getInstance().current_slice->scene.extruders[new_extruder].settings.get<std::string>("machine_extruder_start_code");
 
-    if (*start_code)
+    if (!start_code.empty())
     {
         if (relative_extrusion)
         {
             writeExtrusionMode(false); // ensure absolute extrusion mode is set before the start gcode
         }
 
-        writeCode(start_code);
+        writeCode(start_code.c_str());
 
         if (relative_extrusion)
         {
@@ -973,17 +972,16 @@ void GCodeExport::switchExtruder(size_t new_extruder, const RetractionConfig& re
     resetExtrusionValue(); // zero the E value on the old extruder, so that the current_e_value is registered on the old extruder
 
     const size_t old_extruder = current_extruder;
-    const std::string end_code_str = Application::getInstance().current_slice->scene.extruders[old_extruder].settings.get<std::string>("machine_extruder_end_code");
-    const char *end_code = end_code_str.c_str();
+    const std::string end_code = old_extruder_settings.get<std::string>("machine_extruder_end_code");
 
-    if (*end_code)
+    if (!end_code.empty())
     {
         if (relative_extrusion)
         {
             writeExtrusionMode(false); // ensure absolute extrusion mode is set before the end gcode
         }
 
-        writeCode(end_code);
+        writeCode(end_code.c_str());
 
         if (relative_extrusion)
         {
