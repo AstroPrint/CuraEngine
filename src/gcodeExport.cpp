@@ -971,7 +971,7 @@ void GCodeExport::switchExtruder(size_t new_extruder, const RetractionConfig& re
 
     resetExtrusionValue(); // zero the E value on the old extruder, so that the current_e_value is registered on the old extruder
 
-    const size_t old_extruder = current_extruder;
+    const Settings& old_extruder_settings = Application::getInstance().current_slice->scene.extruders[current_extruder].settings;
     const std::string end_code = old_extruder_settings.get<std::string>("machine_extruder_end_code");
 
     if (!end_code.empty())
